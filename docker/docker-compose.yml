@@ -1,0 +1,92 @@
+# tms_efield_prediction/docker/docker-compose.yml
+version: '3.8'
+
+services:
+  tms-efield-prediction:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: tms-efield-prediction:latest
+    container_name: tms-efield-prediction
+    volumes:
+      # Mount data directories
+      - ../data/raw:/data/raw
+      - ../data/processed:/data/processed
+      - ../experiments:/experiments
+      # Mount code for development
+      - ../tms_efield_prediction:/app/tms_efield_prediction
+      - ../tests:/app/tests
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - PYTHONPATH=/app
+      - DATA_DIR=/data
+      - EXPERIMENT_DIR=/experiments
+      - MAX_MEMORY_GB=64
+    deploy:
+      resources:
+        limits:
+          memory: 64G
+        reservations:
+          memory: 16G
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: sleep infinity  # Keep container running
+
+  # Specific container for dual_modal pipeline
+  dual-modal-pipeline:
+    extends: tms-efield-prediction
+    container_name: dual-modal-pipeline
+    environment:
+      - PIPELINE_MODE=dual_modal
+      - NVIDIA_VISIBLE_DEVICES=all
+      - PYTHONPATH=/app
+      - DATA_DIR=/data
+      - EXPERIMENT_DIR=/experiments
+      - MAX_MEMORY_GB=64
+    command: >
+      bash -c "python -m tms_efield_prediction.data.pipeline.runner --mode dual_modal"
+
+  # Specific container for oriented_mri pipeline
+  oriented-mri-pipeline:
+    extends: tms-efield-prediction
+    container_name: oriented-mri-pipeline
+    environment:
+      - PIPELINE_MODE=oriented_mri
+      - NVIDIA_VISIBLE_DEVICES=all
+      - PYTHONPATH=/app
+      - DATA_DIR=/data
+      - EXPERIMENT_DIR=/experiments
+      - MAX_MEMORY_GB=64
+    command: >
+      bash -c "python -m tms_efield_prediction.data.pipeline.runner --mode oriented_mri"
+
+  # Specific container for mri_efield pipeline
+  mri-efield-pipeline:
+    extends: tms-efield-prediction
+    container_name: mri-efield-pipeline
+    environment:
+      - PIPELINE_MODE=mri_efield
+      - NVIDIA_VISIBLE_DEVICES=all
+      - PYTHONPATH=/app
+      - DATA_DIR=/data
+      - EXPERIMENT_DIR=/experiments
+      - MAX_MEMORY_GB=64
+    command: >
+      bash -c "python -m tms_efield_prediction.data.pipeline.runner --mode mri_efield"
+
+  # Container for Ray Tune AutoML
+  ray-tune:
+    extends: tms-efield-prediction
+    container_name: ray-tune
+    ports:
+      - "8265:8265"  # Ray Dashboard
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - PYTHONPATH=/app
+      - DATA_DIR=/data
+      - EXPERIMENT_DIR=/experiments
+      - MAX_MEMORY_GB=64
+    command: >
+      bash -c "ray start --head --port=6379 --dashboard-host=0.0.0.0 --dashboard-port=8265 && sleep infinity"
