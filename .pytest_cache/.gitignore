@@ -1,0 +1,26 @@
+# Created by pytest automatically.
+
+# Integration test outputs
+tests/integration/cmaes_automl_output/
+tests/integration/loso_holdout_*/
+
+# Unit test outputs
+tests/unit/augmentation_visualizations/
+tests/unit/automl_memory_experiments/
+tests/unit/checkpoints/
+tests/unit/cmaes_automl_memory_output/
+tests/unit/memory_experiment_output/
+tests/unit/memory_experiments/
+tests/unit/models/
+tests/unit/output/
+tests/unit/simnibs_env/
+tests/unit/standalone_test_output_kfold/
+tests/unit/standalone_test_output_noargs/
+tests/unit/visualization/
+
+# Python cache files
+tests/unit/__pycache__/
+tests/integration/__pycache__/
+
+# Virtual environment
+venv/

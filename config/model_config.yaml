@@ -1,0 +1,45 @@
+# config/model_config.yaml
+
+# General model configuration
+model:
+  type: "unet3d"  # Model architecture type
+  input_shape: [2, 128, 128, 128]  # [channels, depth, height, width]
+  output_shape: [3, 128, 128, 128]  # [channels, depth, height, width]
+  input_channels: 2  # Number of input channels (MRI + dA/dt)
+  output_channels: 3  # Number of output channels (x, y, z components of E-field)
+  feature_maps: 32  # Base number of feature maps
+  levels: 4  # Number of encoding/decoding levels
+  dropout_rate: 0.2  # Dropout rate
+  batch_norm: true  # Use batch normalization
+  activation: "leaky_relu"  # Activation function
+
+# Architecture-specific parameters
+unet3d:
+  use_residual: true  # Use residual connections
+  use_attention: true  # Use attention mechanisms
+  normalization: "batch"  # Normalization type
+  upsampling_mode: "transpose"  # Upsampling mode
+  deep_supervision: false  # Use deep supervision
+
+# Dual-modal architecture parameters
+dual_modal:
+  fusion_type: "attention"  # How to fuse MRI and dA/dt features
+  fusion_level: 3  # At which level to fuse encoders (0 = earliest, 4 = latest)
+  shared_decoder: true  # Whether to use a shared decoder
+  mri_encoder_depth: 4  # Depth of MRI encoder
+  dadt_encoder_depth: 3  # Depth of dA/dt encoder
+
+# Memory management
+memory:
+  enable_checkpointing: true  # Enable gradient checkpointing
+  mixed_precision: true  # Use mixed precision training
+  optimize_memory_usage: true  # Optimize memory usage
+
+# Debug and monitoring
+debug:
+  log_gradients: false  # Log gradient statistics
+  log_activations: false  # Log activation statistics
+  profile_forward_pass: false  # Profile forward pass
+  trace_execution: false  # Trace execution
+  monitor_memory: true  # Monitor memory usage
+  sampling_rate: 0.1  # Debug sampling rate

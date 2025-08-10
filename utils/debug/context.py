@@ -33,24 +33,66 @@ class DebugContext:
             
         return True
 
-
-@dataclass
-class PipelineDebugContext(DebugContext):
-    """Debug configuration for pipeline components."""
-    history_buffer_size: int = 1000
+class CircularBuffer:
+    """Thread-safe circular buffer for debug history."""
     
-    def validate(self) -> bool:
-        """Validate pipeline debug context.
+    def __init__(self, max_size: int = 1000):
+        """Initialize the circular buffer.
+        
+        Args:
+            max_size: Maximum number of items to store
+        """
+        self.buffer = []
+        self.max_size = max_size
+        self.lock = threading.Lock()
+    
+    def append(self, item: Any):
+        """Add an item to the buffer.
+        
+        Args:
+            item: Item to add
+        """
+        with self.lock:
+            self.buffer.append(item)
+            # Remove oldest items if buffer is full
+            if len(self.buffer) > self.max_size:
+                self.buffer = self.buffer[-self.max_size:]
+    
+    def extend(self, items: List[Any]):
+        """Add multiple items to the buffer.
+        
+        Args:
+            items: Items to add
+        """
+        with self.lock:
+            self.buffer.extend(items)
+            # Remove oldest items if buffer is full
+            if len(self.buffer) > self.max_size:
+                self.buffer = self.buffer[-self.max_size:]
+    
+    def get_all(self) -> List[Any]:
+        """Get all items in the buffer.
         
         Returns:
-            bool: True if valid, raises exception otherwise
+            List of items
         """
-        super().validate()
-        
-        if not 10 <= self.history_buffer_size <= 10000:
-            raise ValueError(f"Invalid history buffer size: {self.history_buffer_size}")
-            
-        return True
+        with self.lock:
+            return self.buffer.copy()
+    
+    def clear(self):
+        """Clear the buffer."""
+        with self.lock:
+            self.buffer = []
+@dataclass
+class PipelineDebugContext(DebugContext):
+    """Debug configuration for pipeline operations."""
+    history_buffer_size: int = 1000  # Size of circular buffer for history
+    debug_history: Optional[CircularBuffer] = None  # History of debug events
+    
+    def __post_init__(self):
+        """Initialize the debug history buffer."""
+        if self.debug_history is None:
+            self.debug_history = CircularBuffer(self.history_buffer_size)
 
 
 @dataclass
