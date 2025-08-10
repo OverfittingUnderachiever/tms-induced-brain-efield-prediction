@@ -92,25 +92,17 @@ graph TB
         Tests[Integration Tests]
     end
     
-    subgraph "Core Domain Layer"
-        Models[Neural Networks]
-        Pipeline[Data Pipeline]
-        Simulation[TMS Simulation]
-    end
-    
     subgraph "Infrastructure Layer"
         Utils[Utilities & Visualization]
         Debug[Debug & Monitoring]
         Config[Configuration]
     end
     
-    CLI --> Models
-    AutoML --> Models
-    Models --> Pipeline
-    Pipeline --> Simulation
-    Utils --> Models
-    Debug --> Pipeline
-    Config --> Models
+    subgraph "Core Domain Layer"
+        Models[Neural Networks]
+        Pipeline[Data Pipeline]
+        Simulation[TMS Simulation]
+    end
 ```
 
 ### 🔄 **Data Flow**
