@@ -38,17 +38,39 @@ This project implements a state-of-the-art machine learning pipeline for predict
 - **Attention Mechanisms**: CBAM-based attention for improved feature extraction
 - **Magnitude & Vector Prediction**: Support for both scalar and vector field outputs
 
+<div align="center">
+<img src="images/unet_architecture.png" alt="U-Net Architecture" width="700"/>
+</div>
+
+*3D U-Net architecture with dynamic feature multipliers and skip connections optimized for TMS field prediction*
+
 ### 🔄 **Data Pipeline**
 - **SimNIBS Integration**: Seamless workflow with SimNIBS simulation environment
 - **Mesh-to-Grid Transformation**: Efficient voxelization of irregular mesh data
 - **Field Processing**: Advanced E-field and dA/dt data preprocessing
 - **Multi-Subject Support**: Cross-subject training and validation capabilities
 
+### Data Generation & Training Pipeline
+
+<div align="center">
+<img src="images/data_flow_diagram.png" alt="TMS Data Pipeline" width="600"/>
+</div>
+
+*Complete workflow from SimNIBS mesh processing to voxelized training data generation*
+
 ### 🤖 **AutoML & Optimization**
 - **Bayesian Optimization**: Automated hyperparameter tuning with Ray Tune
 - **CMA-ES Support**: Evolutionary optimization strategies
 - **K-Fold Cross-Validation**: Robust model evaluation framework
 - **Distributed Training**: Multi-GPU support for large-scale experiments
+
+### Data Augmentation Pipeline
+
+<div align="center">
+<img src="images/augmentation_examples.png" alt="Data Augmentation" width="800"/>
+</div>
+
+*Comprehensive data augmentation strategies including spatial transformations, elastic deformations, and intensity scaling to improve model generalization*
 
 ### 📊 **Visualization & Analysis**
 - **3D Field Visualization**: Interactive Three.js-based field rendering
@@ -348,6 +370,14 @@ The system provides comprehensive evaluation metrics tailored for TMS applicatio
 - **Field Similarity**: Combined magnitude and directional metrics
 - **Correlation Coefficients**: Statistical similarity measures
 
+### Model Performance Comparison
+
+<div align="center">
+<img src="images/error_distribution_comparison.png" alt="Model Performance Comparison" width="900"/>
+</div>
+
+*Error distribution analysis across different model architectures showing consistent sub-10% MAE performance with ensemble models achieving optimal accuracy*
+
 ---
 
 ## 🛠️ Development
@@ -437,6 +467,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **PyTorch Community**: For the deep learning infrastructure
 - **Ray Team**: For distributed computing and hyperparameter optimization
 - **Research Contributors**: For validation and clinical insights
+
+---
+
+## 📞 Contact & Support
+
+- **Issues**: [GitHub Issues](https://github.com/yourusername/tms-efield-prediction/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/tms-efield-prediction/discussions)
+- **Email**: your.email@domain.com
 
 ---
 
