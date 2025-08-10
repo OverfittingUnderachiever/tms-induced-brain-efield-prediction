@@ -3,9 +3,9 @@
 <div align="center">
 
 ![TMS E-field Prediction](https://img.shields.io/badge/TMS-E--field%20Prediction-blue)
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
-![PyTorch](https://img.shields.io/badge/PyTorch-1.9+-red.svg)
-![SimNIBS](https://img.shields.io/badge/SimNIBS-Compatible-green.svg)
+![Python](https://img.shields.io/badge/python-3.7+-blue.svg)
+![PyTorch](https://img.shields.io/badge/PyTorch-1.13+-red.svg)
+![SimNIBS](https://img.shields.io/badge/SimNIBS-3.2+-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 *A comprehensive neural network framework for predicting electric field distributions in Transcranial Magnetic Stimulation (TMS) applications*
@@ -125,29 +125,88 @@ graph LR
 
 ### Prerequisites
 
-- Python 3.8+
-- CUDA-capable GPU (recommended)
-- SimNIBS 3.0+ (for simulation data)
+- **Python 3.7+** (specifically tested with Python 3.7.16)
+- **CUDA-capable GPU** (recommended for training)
+- **SimNIBS 3.2+** (for simulation data)
+- **Miniconda/Anaconda** (for environment management)
 
-### Setup
+### Environment Setup
+
+This project requires a specific conda environment with SimNIBS and scientific computing packages. Follow these steps:
+
+#### Option 1: Using the Provided Environment File (Recommended)
 
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/tms-efield-prediction.git
 cd tms-efield-prediction
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Create the conda environment from the provided file
+conda env create -f simnibs3_environment.yml
 
-# Install dependencies
-pip install -r requirements.txt
+# Activate the environment
+conda activate simnibs3
 
-# Install in development mode
+# Add the project to Python path (if needed)
+export PYTHONPATH=$PYTHONPATH:~/MA_Henry
+```
+
+#### Option 2: Manual Environment Setup
+
+```bash
+# Create a new conda environment with Python 3.7
+conda create -n simnibs3 python=3.7.16
+
+# Activate the environment
+conda activate simnibs3
+
+# Install SimNIBS (follow official SimNIBS installation guide)
+# This will install most required dependencies
+
+# Install additional packages
+pip install torch==1.13.1 torchvision
+pip install numpy==1.21.6 scipy==1.7.3 matplotlib==3.5.3
+pip install pandas==1.3.5 scikit-learn==1.0.2
+pip install nibabel h5py pyvista vtk
+pip install jupyter ipython
+pip install ray optuna bayesian-optimization
+pip install monai plotly seaborn bokeh
+pip install pytest
+
+# Install the project in development mode
 pip install -e .
 ```
 
-### Docker Setup
+#### Environment Activation Script
+
+For convenience, you can create an activation script. The project includes `activate_simnibs32.sh`:
+
+```bash
+# Make the script executable
+chmod +x activate_simnibs32.sh
+
+# Source the script before running the project
+source ./activate_simnibs32.sh
+export PYTHONPATH=$PYTHONPATH:~/MA_Henry
+```
+
+### Verification
+
+Verify your installation:
+
+```bash
+# Check Python version and location
+python --version
+which python
+
+# Test SimNIBS import
+python -c "import simnibs; print('SimNIBS version:', simnibs.__version__)"
+
+# Test PyTorch with CUDA (if available)
+python -c "import torch; print('PyTorch version:', torch.__version__); print('CUDA available:', torch.cuda.is_available())"
+```
+
+### Docker Setup (Alternative)
 
 ```bash
 # Build Docker image
@@ -157,11 +216,30 @@ docker build -t tms-efield-prediction .
 docker run --gpus all -v $(pwd):/workspace tms-efield-prediction
 ```
 
+### Important Notes
+
+- **SimNIBS Integration**: This project requires SimNIBS to be properly installed and configured
+- **Environment Isolation**: Always activate the `simnibs3` environment before running any scripts
+- **GPU Support**: CUDA-capable GPU recommended for training, but not required for inference
+- **Memory Requirements**: Large models may require 16GB+ RAM for training
+
 ---
 
 ## ⚡ Quick Start
 
-### 1. Generate Training Data
+### 1. Environment Setup
+
+```bash
+# Activate the environment
+conda activate simnibs3
+export PYTHONPATH=$PYTHONPATH:~/MA_Henry
+
+# Or use the provided script
+source ./activate_simnibs32.sh
+export PYTHONPATH=$PYTHONPATH:~/MA_Henry
+```
+
+### 2. Generate Training Data
 
 ```bash
 python generate_training_data_cli.py \
@@ -171,7 +249,7 @@ python generate_training_data_cli.py \
     --output_format pytorch
 ```
 
-### 2. Train a Model
+### 3. Train a Model
 
 ```python
 from tms_efield_prediction.experiments import MagnitudeExperimentRunner
@@ -190,7 +268,7 @@ runner = MagnitudeExperimentRunner(config)
 results = runner.train_and_evaluate()
 ```
 
-### 3. AutoML Optimization
+### 4. AutoML Optimization
 
 ```bash
 # Bayesian optimization
@@ -205,7 +283,7 @@ python train_automl_CMAES.py \
     --population_size 8
 ```
 
-### 4. Visualize Results
+### 5. Visualize Results
 
 ```python
 from tms_efield_prediction.utils.visualization import visualize_prediction_vs_ground_truth
@@ -377,6 +455,9 @@ The system provides comprehensive evaluation metrics tailored for TMS applicatio
 ### Running Tests
 
 ```bash
+# Activate environment first
+conda activate simnibs3
+
 # Run all tests
 python -m pytest tests/
 
@@ -415,6 +496,37 @@ context.debug_hook = debug_hook
 
 ---
 
+## 🚨 Troubleshooting
+
+### Common Issues
+
+1. **SimNIBS Import Error**
+   ```bash
+   # Ensure SimNIBS is properly installed and environment is activated
+   conda activate simnibs3
+   python -c "import simnibs"
+   ```
+
+2. **CUDA/PyTorch Issues**
+   ```bash
+   # Check PyTorch CUDA compatibility
+   python -c "import torch; print(torch.cuda.is_available())"
+   ```
+
+3. **Missing PYTHONPATH**
+   ```bash
+   # Add project to Python path
+   export PYTHONPATH=$PYTHONPATH:~/MA_Henry
+   ```
+
+4. **Environment Activation**
+   ```bash
+   # Always activate the environment first
+   source ./activate_simnibs32.sh
+   ```
+
+---
+
 ## 📚 Documentation
 
 - **[System Architecture](docs/architecture.md)**: Detailed technical architecture
@@ -433,9 +545,11 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes and add tests
-4. Run the test suite: `pytest`
-5. Submit a pull request
+3. Set up the environment: `conda env create -f simnibs3_environment.yml`
+4. Activate environment: `conda activate simnibs3`
+5. Make your changes and add tests
+6. Run the test suite: `pytest`
+7. Submit a pull request
 
 ### Areas for Contribution
 
@@ -475,5 +589,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **⭐ Star this repository if you found it helpful!**
 
 Made with ❤️ for the TMS research community
+
+</div>
 
 </div>
