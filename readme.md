@@ -130,28 +130,43 @@ graph LR
 - **SimNIBS 3.2+** (for simulation data)
 - **Miniconda/Anaconda** (for environment management)
 
-### Environment Setup
-
-This project requires a specific conda environment with SimNIBS and scientific computing packages. Follow these steps:
-
-#### Option 1: Using the Provided Environment File (Recommended)
+### Quick Setup
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/yourusername/tms-efield-prediction.git
 cd tms-efield-prediction
 
-# Create the conda environment from the provided file
+# 2. Create the conda environment
 conda env create -f simnibs3_environment.yml
 
-# Activate the environment
-conda activate simnibs3
-
-# Add the project to Python path (if needed)
-export PYTHONPATH=$PYTHONPATH:~/MA_Henry
+# 3. Run the setup script (this handles everything!)
+source tms_efield_prediction/setup_env.sh
 ```
 
-#### Option 2: Manual Environment Setup
+**That's it!** You're ready to run experiments. The setup script automatically:
+- ✅ Activates the conda environment
+- ✅ Sets up all Python paths correctly
+- ✅ Verifies everything is working
+- ✅ Puts you in the right directory
+
+### Verification
+
+If the setup worked correctly, you should see:
+```
+🚀 Setting up TMS E-field Prediction environment...
+✅ Conda environment 'simnibs3' activated
+✅ PYTHONPATH configured
+✅ Working directory: /path/to/tms-efield-prediction/tms_efield_prediction
+✅ All imports successful - ready to run experiments!
+```
+
+### Alternative Setup Options
+
+<details>
+<summary>Click to expand alternative installation methods</summary>
+
+#### Manual Environment Setup
 
 ```bash
 # Create a new conda environment with Python 3.7
@@ -177,36 +192,7 @@ pip install pytest
 pip install -e .
 ```
 
-#### Environment Activation Script
-
-For convenience, you can create an activation script. The project includes `activate_simnibs32.sh`:
-
-```bash
-# Make the script executable
-chmod +x activate_simnibs32.sh
-
-# Source the script before running the project
-source ./activate_simnibs32.sh
-export PYTHONPATH=$PYTHONPATH:~/MA_Henry
-```
-
-### Verification
-
-Verify your installation:
-
-```bash
-# Check Python version and location
-python --version
-which python
-
-# Test SimNIBS import
-python -c "import simnibs; print('SimNIBS version:', simnibs.__version__)"
-
-# Test PyTorch with CUDA (if available)
-python -c "import torch; print('PyTorch version:', torch.__version__); print('CUDA available:', torch.cuda.is_available())"
-```
-
-### Docker Setup (Alternative)
+#### Docker Setup
 
 ```bash
 # Build Docker image
@@ -216,10 +202,12 @@ docker build -t tms-efield-prediction .
 docker run --gpus all -v $(pwd):/workspace tms-efield-prediction
 ```
 
+</details>
+
 ### Important Notes
 
 - **SimNIBS Integration**: This project requires SimNIBS to be properly installed and configured
-- **Environment Isolation**: Always activate the `simnibs3` environment before running any scripts
+- **Environment Isolation**: Always use the setup script before running any experiments
 - **GPU Support**: CUDA-capable GPU recommended for training, but not required for inference
 - **Memory Requirements**: Large models may require 16GB+ RAM for training
 
@@ -227,29 +215,40 @@ docker run --gpus all -v $(pwd):/workspace tms-efield-prediction
 
 ## ⚡ Quick Start
 
-### 1. Environment Setup
+### Daily Usage
+
+Every time you want to work on the project:
 
 ```bash
-# Activate the environment
-conda activate simnibs3
-export PYTHONPATH=$PYTHONPATH:~/MA_Henry
-
-# Or use the provided script
-source ./activate_simnibs32.sh
-export PYTHONPATH=$PYTHONPATH:~/MA_Henry
+cd tms-efield-prediction
+source tms_efield_prediction/setup_env.sh
 ```
 
-### 2. Generate Training Data
+### Generate Training Data
 
 ```bash
+# Generate training data for multiple subjects
 python generate_training_data_cli.py \
-    --subject_id "sub-01" \
-    --bin_size 64 \
+    --subjects 002 003 004 \
+    --bin_size 15 \
     --processes 4 \
-    --output_format pytorch
+    --mri_mode dti
+
+# Single subject example
+python generate_training_data_cli.py \
+    --subjects 001 \
+    --bin_size 15 \
+    --processes 2 \
+    --mri_mode dti
 ```
 
-### 3. Train a Model
+### Available Parameters:
+- `--subjects`: Subject IDs (space-separated, e.g., `002 003 004`)
+- `--bin_size`: Voxel resolution (e.g., `15` for 15mm voxels)
+- `--processes`: Number of parallel processes
+- `--mri_mode`: MRI processing mode (`dti` recommended)
+
+### Train a Model
 
 ```python
 from tms_efield_prediction.experiments import MagnitudeExperimentRunner
@@ -268,7 +267,7 @@ runner = MagnitudeExperimentRunner(config)
 results = runner.train_and_evaluate()
 ```
 
-### 4. AutoML Optimization
+### AutoML Optimization
 
 ```bash
 # Bayesian optimization
@@ -283,7 +282,7 @@ python train_automl_CMAES.py \
     --population_size 8
 ```
 
-### 5. Visualize Results
+### Visualize Results
 
 ```python
 from tms_efield_prediction.utils.visualization import visualize_prediction_vs_ground_truth
@@ -455,8 +454,8 @@ The system provides comprehensive evaluation metrics tailored for TMS applicatio
 ### Running Tests
 
 ```bash
-# Activate environment first
-conda activate simnibs3
+# Use the setup script first
+source tms_efield_prediction/setup_env.sh
 
 # Run all tests
 python -m pytest tests/
@@ -500,30 +499,60 @@ context.debug_hook = debug_hook
 
 ### Common Issues
 
-1. **SimNIBS Import Error**
+1. **Setup script fails with "environment not found"**
    ```bash
-   # Ensure SimNIBS is properly installed and environment is activated
-   conda activate simnibs3
-   python -c "import simnibs"
+   # Make sure you created the environment first
+   conda env create -f simnibs3_environment.yml
    ```
 
-2. **CUDA/PyTorch Issues**
+2. **"No module named 'Code'" error**
+   ```bash
+   # Make sure you run the setup script from the project root
+   cd tms-efield-prediction
+   source tms_efield_prediction/setup_env.sh
+   ```
+
+3. **SimNIBS import error**
+   ```bash
+   # Ensure SimNIBS is properly installed in your conda environment
+   conda activate simnibs3
+   python -c "import simnibs; print('SimNIBS version:', simnibs.__version__)"
+   ```
+
+4. **Permission denied**
+   ```bash
+   # Make sure the setup script is executable
+   chmod +x tms_efield_prediction/setup_env.sh
+   ```
+
+5. **CUDA/PyTorch Issues**
    ```bash
    # Check PyTorch CUDA compatibility
-   python -c "import torch; print(torch.cuda.is_available())"
+   python -c "import torch; print('PyTorch version:', torch.__version__); print('CUDA available:', torch.cuda.is_available())"
    ```
 
-3. **Missing PYTHONPATH**
-   ```bash
-   # Add project to Python path
-   export PYTHONPATH=$PYTHONPATH:~/MA_Henry
-   ```
+### Pro Tip: Create a Global Alias
 
-4. **Environment Activation**
-   ```bash
-   # Always activate the environment first
-   source ./activate_simnibs32.sh
-   ```
+For even easier access, add this to your shell profile:
+
+```bash
+# Add to ~/.bashrc or ~/.zshrc
+echo 'alias tms-setup="cd /path/to/tms-efield-prediction && source tms_efield_prediction/setup_env.sh"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+Then you can just run `tms-setup` from anywhere!
+
+### Getting Help
+
+If you encounter issues:
+
+1. Check that all prerequisites are installed
+2. Verify the conda environment was created successfully: `conda env list`
+3. Make sure SimNIBS is working: `conda activate simnibs3 && python -c "import simnibs"`
+4. Run the setup script with verbose output to see what's failing
+
+The setup script will tell you exactly what went wrong and how to fix it.
 
 ---
 
@@ -546,7 +575,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature-name`
 3. Set up the environment: `conda env create -f simnibs3_environment.yml`
-4. Activate environment: `conda activate simnibs3`
+4. Activate environment: `source tms_efield_prediction/setup_env.sh`
 5. Make your changes and add tests
 6. Run the test suite: `pytest`
 7. Submit a pull request
@@ -589,7 +618,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **⭐ Star this repository if you found it helpful!**
 
 Made with ❤️ for the TMS research community
-
-</div>
 
 </div>
