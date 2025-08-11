@@ -134,8 +134,8 @@ graph LR
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/yourusername/tms-efield-prediction.git
-cd tms-efield-prediction
+git clone https://github.com/yourusername/tms_efield_prediction.git
+cd tms_efield_prediction
 
 # 2. Create the conda environment
 conda env create -f simnibs3_environment.yml
