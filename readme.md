@@ -157,7 +157,7 @@ If the setup worked correctly, you should see:
 🚀 Setting up TMS E-field Prediction environment...
 ✅ Conda environment 'simnibs3' activated
 ✅ PYTHONPATH configured
-✅ Working directory: /path/to/tms-efield-prediction/tms_efield_prediction
+✅ Working directory: /path/to/tms_efield_prediction/tms_efield_prediction
 ✅ All imports successful - ready to run experiments!
 ```
 
@@ -220,7 +220,7 @@ docker run --gpus all -v $(pwd):/workspace tms-efield-prediction
 Every time you want to work on the project:
 
 ```bash
-cd tms-efield-prediction
+cd tms_efield_prediction
 source tms_efield_prediction/setup_env.sh
 ```
 
@@ -508,7 +508,7 @@ context.debug_hook = debug_hook
 2. **"No module named 'Code'" error**
    ```bash
    # Make sure you run the setup script from the project root
-   cd tms-efield-prediction
+   cd tms_efield_prediction
    source tms_efield_prediction/setup_env.sh
    ```
 
@@ -537,7 +537,7 @@ For even easier access, add this to your shell profile:
 
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
-echo 'alias tms-setup="cd /path/to/tms-efield-prediction && source tms_efield_prediction/setup_env.sh"' >> ~/.bashrc
+echo 'alias tms-setup="cd /path/to/tms_efield_prediction && source tms_efield_prediction/setup_env.sh"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -607,8 +607,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact & Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/tms-efield-prediction/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/tms-efield-prediction/discussions)
+- **Issues**: [GitHub Issues](https://github.com/yourusername/tms_efield_prediction/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/tms_efield_prediction/discussions)
 - **Email**: your.email@domain.com
 
 ---
