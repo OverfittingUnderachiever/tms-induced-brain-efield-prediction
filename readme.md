@@ -603,13 +603,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Ray Team**: For distributed computing and hyperparameter optimization
 - **Research Contributors**: For validation and clinical insights
 
----
-
-## 📞 Contact & Support
-
-- **Issues**: [GitHub Issues](https://github.com/yourusername/tms_efield_prediction/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/tms_efield_prediction/discussions)
-- **Email**: your.email@domain.com
 
 ---
 
